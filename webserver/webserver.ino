@@ -51,12 +51,12 @@ void loop(void) {
   http.begin("http://172.30.1.92:8080/"); // connect to Spring server
   int httpCode = http.GET();
 
-  if(httpCode > 0){
-    Serial.println(httpCode);
-    String result = http.getString();
-    Serial.println(result);
-  }
-  delay(50000); // 5/1000 sec
+  // if(httpCode > 0){
+  //   Serial.println(httpCode);
+  //   String result = http.getString();
+  //   Serial.println(result);
+  // }
+  delay(1000);
 }
 
 void handleRootEvent() {
@@ -69,21 +69,22 @@ void handleRootEvent() {
   sscanf(clientIP.c_str(), "%d.%d.%d.%d", &octet1, &octet2, &octet3, &octet4);
   String maskedIP = String(octet1) + ".XXX.XXX." + String(octet4); // 2nd, 3rd masking
 
+  String convertedTemp = calcAndConvertTemp();
+  String message = "Welcome Inha SmartFactory WebServer!\n\n";
+  message += "Your IP address: " + maskedIP;
+  message = message + "\nTemperature: " + convertedTemp;
+  server.send(200, "text/plain", message);  // status code 200(OK), format, message
+
+  Serial.println(clientIP);
+  Serial.println(convertedTemp);
+}
+
+String calcAndConvertTemp(){
   Vo = analogRead(tempSensor); // read from temperature sensing value
   R2 = R1 * (4095.0 / (float)Vo - 1.0);
   logR2 = log(R2);
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
   Tc = T - 273.15;  // celsius
   Tf = (Tc * 9.0/5.0) + 32.0;  // fahrenheit
-
-  String message = "Welcome Inha SmartFactory WebServer!\n\n";
-  message += "Your IP address: " + maskedIP;
-  message = message + "\nTemperature: " + String(Tc) + "C " + "(" + String(Tf) + "F)";
-  server.send(200, "text/plain", message);  // status code 200(OK), format, message
-
-  Serial.println(clientIP);
-  Serial.print(Tc);
-  Serial.print("C (");
-  Serial.print(Tf);
-  Serial.println("F)");
+  return String(Tc) + "C " + "(" + String(Tf) + "F)";
 }
