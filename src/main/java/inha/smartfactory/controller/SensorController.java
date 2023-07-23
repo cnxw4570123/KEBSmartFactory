@@ -4,25 +4,20 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.net.InetAddress;
+import java.util.Map;
 
 @Controller
 public class SensorController {
-    @GetMapping("hello")
-    public String hello(Model model){
-        HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        String ip = req.getHeader("X-FORWARDED-FOR");
-        if(ip == null){
-            ip = req.getRemoteAddr();
-        }
-        System.out.println("ip = " + ip);
-        model.addAttribute("data", ip);
-
+    @RequestMapping(value = "/sendData", method = RequestMethod.POST)
+    public String getData(@RequestBody Map<String, Object> postData){
+        StringBuilder sb = new StringBuilder();
+        postData.forEach((key, value) -> sb.append(key + " : " + value));
+        System.out.println("sb.toString() = " + sb.toString());
         return "hello";
     }
 }
