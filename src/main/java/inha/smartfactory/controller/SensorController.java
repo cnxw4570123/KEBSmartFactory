@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +50,9 @@ public class SensorController {
     }
 
 
-    @RequestMapping(value = "/changeLED", method = RequestMethod.GET)
-    public String changeLED(){
-        return "";
+    @RequestMapping(value = "/controlAC", method = RequestMethod.GET)
+    public String changeLED()  {
+        this.sensorService.ControlAC();
+        return "hello";
     }
 }
